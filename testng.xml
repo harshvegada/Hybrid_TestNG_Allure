@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="3" name="Suite" parallel="methods">
+
+	<parameter name="browser" value="ie"></parameter>
+
+	<listeners>
+		<listener class-name="base.RetryListener"></listener>
+	</listeners>
+
+	<test name="Test">
+		<classes>
+			<class name="testScript.HomePageTest" />
+		</classes>
+	</test> <!-- Test -->
+</suite> <!-- Suite -->
