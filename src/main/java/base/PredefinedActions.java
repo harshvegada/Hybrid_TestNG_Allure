@@ -1,10 +1,12 @@
 package base;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.InvalidSelectorException;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchWindowException;
@@ -14,8 +16,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -38,10 +41,11 @@ public abstract class PredefinedActions {
 			driverThread.get().manage().window().maximize();
 			driverThread.get().manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 		}
-		EventFiringWebDriver event = new EventFiringWebDriver(driverThread.get());
-		BrowserEventListeners eventListener = new BrowserEventListeners();
-		event.register(eventListener);
-		driverThread.get().get("http://automationbykrishna.com/");
+		driverThread.get().get("http://automationpractice.com/index.php");
+	}
+
+	protected String getElementText(String locator) {
+		return getElement(locator, true).getText();
 	}
 
 	protected WebElement getElement(String locator, boolean isWaitRequired) {
@@ -99,6 +103,8 @@ public abstract class PredefinedActions {
 		} catch (NoSuchElementException e) {
 			System.out.println(e.getMessage());
 		}
+		JavascriptExecutor js = (JavascriptExecutor) driverThread.get();
+		js.executeScript("arguments[0].scrollIntoView()", element);
 		return element;
 	}
 
@@ -108,23 +114,74 @@ public abstract class PredefinedActions {
 		element.sendKeys(keysToSend);
 	}
 
+	protected String getElementAttatibuteValue(String locator) {
+		return getElement(locator, true).getAttribute("value");
+	}
+
 	protected void clickOnElement(String locator) {
 		WebElement element = getElement(locator, true);
 		element.click();
 	}
 
+	protected List<WebElement> getListOfWebElements(String locator) {
+		WebElement element = null;
+		WebDriverWait wait = new WebDriverWait(driverThread.get(), 30);
+
+		String[] arr = locator.split("]:-");
+		String locatorType = arr[0].substring(1).toLowerCase(); // xpath //24
+		String locatorValue = arr[1];
+
+		List<WebElement> listOfWebElement = null;
+
+		try {
+			switch (locatorType) {
+			case "xpath":
+				listOfWebElement = driverThread.get().findElements(By.xpath(locatorValue));
+				break; // 30
+
+			case "id":
+				listOfWebElement = driverThread.get().findElements(By.id(locatorValue));
+				break;
+
+			case "name":
+				listOfWebElement = driverThread.get().findElements(By.name(locatorValue));
+				break;
+
+			case "css":
+				listOfWebElement = driverThread.get().findElements(By.cssSelector(locatorValue));
+				break;
+
+			case "linktext":
+				listOfWebElement = driverThread.get().findElements(By.linkText(locatorValue));
+				break;
+
+			default:
+				System.out.println("Please select correct locatorType, locatorType " + locatorType + " is invalid");
+			}
+		} catch (ElementNotVisibleException e) {
+			System.out.println(e.getMessage());
+		} catch (InvalidSelectorException ise) {
+			System.out.println(ise.getMessage());
+		} catch (NoSuchElementException e) {
+			System.out.println(e.getMessage());
+		}
+		JavascriptExecutor js = (JavascriptExecutor) driverThread.get();
+		js.executeScript("arguments[0].scrollIntoView()", element);
+
+		return listOfWebElement;
+	}
+
 	protected void terminateBrowser() {
-		System.out.println(Thread.currentThread().getName() + " : " + driverThread.get());
 		driverThread.get().close();
 	}
 
-	public byte[] takeScreenShot() {
+	protected byte[] takeScreenShot() {
 		TakesScreenshot ts = (TakesScreenshot) driverThread.get();
 		byte[] src = ts.getScreenshotAs(OutputType.BYTES);
 		return src;
 	}
 
-	public void switchToWindow(String winName) {
+	protected void switchToWindow(String winName) {
 		try {
 			driverThread.get().switchTo().window(winName);
 		} catch (NoSuchWindowException e) {
@@ -132,7 +189,7 @@ public abstract class PredefinedActions {
 		}
 	}
 
-	public void acceptAlert() {
+	protected void acceptAlert() {
 		WebDriverWait wait = new WebDriverWait(driverThread.get(), 10);
 		wait.until(ExpectedConditions.alertIsPresent());
 		try {
@@ -142,4 +199,19 @@ public abstract class PredefinedActions {
 		}
 	}
 
+	protected void mouseHoveOnElement(String locator) {
+		WebElement element = getElement(locator, true);
+		Actions actions = new Actions(driverThread.get());
+		actions.moveToElement(element).build().perform();
+	}
+
+	protected void selectElementWithValue(String locator, String value) {
+		Select select = new Select(getElement(locator, false));
+		select.selectByValue(value);
+	}
+
+	protected void selectElementWithVisibleText(String locator, String visibleText) {
+		Select select = new Select(getElement(locator, false));
+		select.selectByVisibleText(visibleText);
+	}
 }

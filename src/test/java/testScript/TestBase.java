@@ -10,11 +10,16 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
 import base.TestNGListenersImpl;
+import pages.CommonFunction;
+import pages.LoginPage;
 import utils.PropertieFileUtils;
 
 public class TestBase extends TestNGListenersImpl {
 
 	public static String browsername;
+	LoginPage loginPage = LoginPage.getHomePage();
+	CommonFunction commonFunction = CommonFunction.getCommonFunction();
+	
 
 	@BeforeSuite
 	@Parameters("browser")
@@ -41,5 +46,7 @@ public class TestBase extends TestNGListenersImpl {
 		sysProp.put("Time", Calendar.getInstance().getTime().toString());
 		PropertieFileUtils.setPropertiesFileForReport(sysProp, path);
 	}
+	
+	
 
 }
