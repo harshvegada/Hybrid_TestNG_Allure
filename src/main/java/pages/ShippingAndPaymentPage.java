@@ -15,7 +15,7 @@ public class ShippingAndPaymentPage extends PredefinedActions {
 	private Properties prop;
 
 	private ShippingAndPaymentPage() {
-		prop = PropertieFileUtils.getProperties(Constants.COMMON_ELEMENT);
+		prop = PropertieFileUtils.getProperties(Constants.SHIPPING_AND_PAYMENT_ELEMENT);
 	}
 
 	public static ShippingAndPaymentPage getShippingAndPaymentPage() {
@@ -27,29 +27,74 @@ public class ShippingAndPaymentPage extends PredefinedActions {
 
 	public ShippingAndPaymentPage verifyTotalBillAmt() {
 		String totalAmt = getElementText(prop.getProperty("totalBillAmt"));
-		Assert.assertEquals(totalAmt, ProductDetails.getTotal_bill());
-		System.out.println("Total Amount matched");
+		ProductDetails.setTotal_bill(totalAmt);
 		return ShippingAndPaymentPage.getShippingAndPaymentPage();
 	}
 
 	public ShippingAndPaymentPage verifyDeliveryAddress(Map<Object, Object> userDetails) {
-		getElementText(prop.getProperty("deliveryAddress")).trim();
-		getElementText(prop.getProperty("cityStateAndZipCode")).trim();
-		getElementText(prop.getProperty("country")).trim();
-		getElementText(prop.getProperty("mobilePhoneNumber")).trim();
+		String uiFirstNameAndLastName = getElementText(prop.getProperty("firstNameAndLastName")).trim();
+		String uiaddress = getElementText(prop.getProperty("deliveryAddress")).trim();
+		String uicityStateAndZipCode = getElementText(prop.getProperty("cityStateAndZipCode")).trim();
+		String country = getElementText(prop.getProperty("country")).trim();
+
+		System.out.println(userDetails);
 
 		String fistNameAndLastName = userDetails.get("firstName").toString() + " "
 				+ userDetails.get("lastName").toString();
 
-		Assert.assertEquals("First Name & Last Mismatch", "",
-				getElementText(prop.getProperty("firstNameAndLastName")).trim());
+		String userCountry = userDetails.get("userCountry").toString();
+		String userAddress1 = userDetails.get("userAddress1").toString();
+		String userCity = userDetails.get("userCity").toString() + ", " + userDetails.get("userCity") + " 37211";
 
+		Assert.assertEquals("Address mismatch", uiaddress, userAddress1);
+		Assert.assertEquals("Name mismatch", uiFirstNameAndLastName, fistNameAndLastName);
+		Assert.assertEquals("city & Zip mismatch", uicityStateAndZipCode, userCity);
+		Assert.assertEquals("Country mismatch", country, userCountry);
+
+		return ShippingAndPaymentPage.getShippingAndPaymentPage();
+	}
+
+	public ShippingAndPaymentPage clickOnProcessOnSummary() {
+		clickOnElement(prop.getProperty("processAddressOnSummary"));
 		return ShippingAndPaymentPage.getShippingAndPaymentPage();
 	}
 
 	public ShippingAndPaymentPage clickOnProcessAddress() {
-		clickOnElement(prop.getProperty("processAddress"));
+		clickOnElement(prop.getProperty("processShippingAddress"));
 		return ShippingAndPaymentPage.getShippingAndPaymentPage();
 	}
 
+	public ShippingAndPaymentPage clickOnProcessOnCarrier() {
+		clickOnElement(prop.getProperty("processCarrierButton"));
+		return ShippingAndPaymentPage.getShippingAndPaymentPage();
+	}
+
+	public ShippingAndPaymentPage agressToTermsAndConditions() {
+		clickOnElement(prop.getProperty("termsAndConditions"));
+		return ShippingAndPaymentPage.getShippingAndPaymentPage();
+	}
+
+	public ShippingAndPaymentPage getTotalAmt() {
+		Assert.assertEquals(ProductDetails.getTotal_bill(), getElementText(prop.getProperty("totalAmt")));
+		return ShippingAndPaymentPage.getShippingAndPaymentPage();
+	}
+
+	public ShippingAndPaymentPage confirmOrder() {
+		clickOnElement(prop.getProperty("confirmOrder"));
+		return ShippingAndPaymentPage.getShippingAndPaymentPage();
+	}
+
+	public void getFinalBillVerify() {
+		Assert.assertEquals(ProductDetails.getTotal_bill(), getElementText(prop.getProperty("finalBillAmt")));
+	}
+
+	public MyAccountPage backToOrder() {
+		clickOnElement(prop.getProperty("backToOrder"));
+		return MyAccountPage.getMyAccountPage();
+	}
+
+	public ShippingAndPaymentPage payBillUsingCheck() {
+		clickOnElement(prop.getProperty("payByCheck"));
+		return ShippingAndPaymentPage.getShippingAndPaymentPage();
+	}
 }

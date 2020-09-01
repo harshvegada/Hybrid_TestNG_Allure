@@ -32,12 +32,23 @@ public class HomePageTest extends TestBase {
 		gotoCommonFunction().
 		mouseHoverToWomenSectionAndClickOn(userDetails.get("productName").toString()).
 		displayTotalNumberResult().
-		choseFirstAvailableProduct().enterQuantity("10").
+		choseFirstAvailableProduct().
+		enterQuantity("10").
+		clickOnAddToCartButton().
 		clickOnProceedToCheckout().
 		verifyTotalBillAmt().
 		verifyDeliveryAddress(userDetails).
+		clickOnProcessOnSummary().
 		clickOnProcessAddress().
-		clickOnProcessAddress();
+		agressToTermsAndConditions().
+		clickOnProcessOnCarrier().
+		payBillUsingCheck().
+		confirmOrder().
+		backToOrder();
+		
+		
+		
+		
 		
 	}
 

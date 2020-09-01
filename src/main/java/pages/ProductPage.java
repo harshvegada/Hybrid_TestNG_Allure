@@ -26,6 +26,7 @@ public class ProductPage extends PredefinedActions {
 	}
 
 	public ProductPage enterQuantity(String numberOfQuantity) {
+		switchToFrame(prop.getProperty("productFrame"));
 		setTextOnElement(prop.getProperty("quantity"), numberOfQuantity);
 		return ProductPage.getProductPage();
 	}
@@ -42,6 +43,7 @@ public class ProductPage extends PredefinedActions {
 
 	public ProductPage clickOnAddToCartButton() {
 		clickOnElement(prop.getProperty("addToCartBytton"));
+		switchToDefaultFrame();
 		return ProductPage.getProductPage();
 	}
 
@@ -49,11 +51,10 @@ public class ProductPage extends PredefinedActions {
 		clickOnElement(prop.getProperty("proceedtocheckout"));
 		return ShippingAndPaymentPage.getShippingAndPaymentPage();
 	}
-	
+
 	public ProductPage clickOnContinueButton() {
 		clickOnElement(prop.getProperty("continueShopping"));
 		return ProductPage.getProductPage();
 	}
-	
 
 }

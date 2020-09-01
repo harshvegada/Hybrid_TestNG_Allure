@@ -3,7 +3,6 @@ package pages;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.tools.ant.taskdefs.Sync.MyCopy;
 import org.testng.Assert;
 
 import base.PredefinedActions;
@@ -45,10 +44,15 @@ public class LoginPage extends PredefinedActions {
 		enterAddressLine1(userDetails.get("userAddress1").toString());
 		enterCityNameInAddress(userDetails.get("userCity").toString());
 		selectStateName(userDetails.get("state").toString());
-		enterZipCodeInYourAddress(userDetails.get("zipCode").toString());
-		enterHomePhoneNumber(userDetails.get("homePhone").toString());
-		enterMobilPhoneNumber(userDetails.get("mobileNumber").toString());
+		enterZipCodeInYourAddress("37211");
+		enterHomePhoneNumber("8905714850");
+		enterMobilPhoneNumber("8905714850");
+		registerAccount();
 		return MyAccountPage.getMyAccountPage();
+	}
+
+	private void registerAccount() {
+		clickOnElement(prop.getProperty("registerAccount"));
 	}
 
 	private void enterEmailAddressForNewUser(String emailAddress) {

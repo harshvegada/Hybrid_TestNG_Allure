@@ -61,10 +61,10 @@ public class TestNGListenersImpl extends PredefinedActions implements ITestListe
 	public void onTestFailure(ITestResult iTestResult) {
 		System.out.println("Failure method " + getTestMethodName(iTestResult) + " failed");
 		// Allure ScreenShotRobot and SaveTestLog
+		makeScreenShot(driverThread.get());
 		if (driverThread.get() instanceof WebDriver) {
 			System.out.println("Screenshot captured for test case:" + getTestMethodName(iTestResult));
 		}
-		makeScreenShot(driverThread.get());
 		saveTextLog(getTestMethodName(iTestResult) + " failed and screenshot taken!");
 		terminateBrowser();
 	}

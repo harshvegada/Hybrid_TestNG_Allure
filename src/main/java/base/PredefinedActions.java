@@ -114,6 +114,14 @@ public abstract class PredefinedActions {
 		element.sendKeys(keysToSend);
 	}
 
+	protected void switchToFrame(String locator) {
+		driverThread.get().switchTo().frame(getElement(locator, true));
+	}
+
+	protected void switchToDefaultFrame() {
+		driverThread.get().switchTo().defaultContent();
+	}
+
 	protected String getElementAttatibuteValue(String locator) {
 		return getElement(locator, true).getAttribute("value");
 	}
@@ -124,9 +132,6 @@ public abstract class PredefinedActions {
 	}
 
 	protected List<WebElement> getListOfWebElements(String locator) {
-		WebElement element = null;
-		WebDriverWait wait = new WebDriverWait(driverThread.get(), 30);
-
 		String[] arr = locator.split("]:-");
 		String locatorType = arr[0].substring(1).toLowerCase(); // xpath //24
 		String locatorValue = arr[1];
@@ -165,9 +170,6 @@ public abstract class PredefinedActions {
 		} catch (NoSuchElementException e) {
 			System.out.println(e.getMessage());
 		}
-		JavascriptExecutor js = (JavascriptExecutor) driverThread.get();
-		js.executeScript("arguments[0].scrollIntoView()", element);
-
 		return listOfWebElement;
 	}
 
