@@ -32,7 +32,7 @@ public abstract class PredefinedActions {
 	static ThreadLocal<WebDriver> driverThread = new ThreadLocal<>();
 
 	protected void createBrowser(String browser) {
-		String nodeURL = "http://localhost:4444/wd/hub";
+		String nodeURL = "http://169.254.111.81:1339";
 		DesiredCapabilities cap = new DesiredCapabilities();
 		cap.setBrowserName("chrome");
 		cap.setPlatform(Platform.WIN10);
