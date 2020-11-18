@@ -6,10 +6,14 @@ import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
+import org.testng.util.Strings;
 
 import io.qameta.allure.Attachment;
 
 public class TestNGListenersImpl extends PredefinedActions implements ITestListener {
+
+	static String browserName = System.getProperty("browser");
+	static String defaultBrowser = "chrome";
 
 	private static String getTestMethodName(ITestResult iTestResult) {
 		return iTestResult.getMethod().getConstructorOrMethod().getName();
@@ -17,8 +21,8 @@ public class TestNGListenersImpl extends PredefinedActions implements ITestListe
 
 	// Text attachments for Allure
 	@Attachment(value = "Page screenshot", type = "image/png")
-	public byte[] makeScreenShot(WebDriver driver) {
-		return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+	public byte[] saveScreenshot(ITestResult iTestResult) {
+		return ((TakesScreenshot) driverThread.get()).getScreenshotAs(OutputType.BYTES);
 	}
 
 	// Text attachments for Allure
@@ -37,6 +41,10 @@ public class TestNGListenersImpl extends PredefinedActions implements ITestListe
 	public void onStart(ITestContext iTestContext) {
 		System.out.println("I am in onStart method " + iTestContext.getName());
 		iTestContext.setAttribute("WebDriver", driverThread.get());
+		System.out.println("------------in context-----------------");
+		TestNGListenersImpl.browserName = (Strings.isNullOrEmpty(browserName)) ? TestNGListenersImpl.defaultBrowser
+				: System.getProperty("browser");
+		System.out.println("Browser : " + browserName);
 	}
 
 	@Override
@@ -46,7 +54,7 @@ public class TestNGListenersImpl extends PredefinedActions implements ITestListe
 
 	@Override
 	public void onTestStart(ITestResult iTestResult) {
-		createBrowser("chrome");
+		createBrowser(TestNGListenersImpl.browserName);
 		System.out.println("Start method " + getTestMethodName(iTestResult) + " start");
 		System.out.println(getTestMethodName(iTestResult) + " test is starting.");
 	}
@@ -61,7 +69,7 @@ public class TestNGListenersImpl extends PredefinedActions implements ITestListe
 	public void onTestFailure(ITestResult iTestResult) {
 		System.out.println("Failure method " + getTestMethodName(iTestResult) + " failed");
 		// Allure ScreenShotRobot and SaveTestLog
-		makeScreenShot(driverThread.get());
+		saveScreenshot(iTestResult);
 		if (driverThread.get() instanceof WebDriver) {
 			System.out.println("Screenshot captured for test case:" + getTestMethodName(iTestResult));
 		}
@@ -72,7 +80,7 @@ public class TestNGListenersImpl extends PredefinedActions implements ITestListe
 	@Override
 	public void onTestSkipped(ITestResult iTestResult) {
 		System.out.println("Skipped method " + getTestMethodName(iTestResult) + " skipped");
-		terminateBrowser();
+		//saveScreenshot(iTestResult);
 	}
 
 	@Override
@@ -80,15 +88,4 @@ public class TestNGListenersImpl extends PredefinedActions implements ITestListe
 		System.out.println("Test failed but it is in defined success ratio " + getTestMethodName(iTestResult));
 	}
 
-	// @Override
-	// public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
-	// createBrowser("chrome");
-	// }
-	//
-	// @Override
-	// public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
-	// if(testResult.getStatus()==ITestResult.FAILURE) {
-	// onTestFailure(testResult);
-	// }
-	// }
 }
