@@ -32,10 +32,10 @@ public class TestBase extends TestNGListenersImpl {
 			currentFile.delete();
 		}
 		System.out.println("History Files deleted from the Allure Folder");
-		getEnvironmentInformationForExecution();
+		loadEnvironmentInformationForExecution();
 	}
 
-	private void getEnvironmentInformationForExecution() {
+	private void loadEnvironmentInformationForExecution() {
 		String path = System.getProperty("user.dir") + File.separator + "allure-results";
 		Map<String, String> sysProp = new HashMap<>();
 		sysProp.put("User Name", System.getProperty("user.name"));
