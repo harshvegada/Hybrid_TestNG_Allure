@@ -1,12 +1,13 @@
 package base;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.InvalidSelectorException;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchWindowException;
@@ -17,6 +18,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -28,9 +31,14 @@ public abstract class PredefinedActions {
 	static ThreadLocal<WebDriver> driverThread = new ThreadLocal<>();
 
 	protected void createBrowser(String browser) {
+		DesiredCapabilities cap = new DesiredCapabilities();
+		try {
+			driverThread.set(new RemoteWebDriver(new URL("http://35.154.68.107/wd/hub"), cap));
+		} catch (MalformedURLException e) {
+		}
 		switch (browser.toUpperCase()) {
 		case "CHROME":
-			WebDriverManager.chromedriver().setup();
+			System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
 			driverThread.set(new ChromeDriver());
 			driverThread.get().manage().window().maximize();
 			driverThread.get().manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
@@ -40,6 +48,7 @@ public abstract class PredefinedActions {
 			driverThread.set(new InternetExplorerDriver());
 			driverThread.get().manage().window().maximize();
 			driverThread.get().manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			break;
 		}
 		driverThread.get().get("http://automationpractice.com/index.php");
 	}
@@ -103,8 +112,6 @@ public abstract class PredefinedActions {
 		} catch (NoSuchElementException e) {
 			System.out.println(e.getMessage());
 		}
-		JavascriptExecutor js = (JavascriptExecutor) driverThread.get();
-		js.executeScript("arguments[0].scrollIntoView()", element);
 		return element;
 	}
 
