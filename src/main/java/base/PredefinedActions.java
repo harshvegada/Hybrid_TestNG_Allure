@@ -12,6 +12,7 @@ import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -31,15 +32,19 @@ public abstract class PredefinedActions {
 	static ThreadLocal<WebDriver> driverThread = new ThreadLocal<>();
 
 	protected void createBrowser(String browser) {
+		String nodeURL = "http://169.254.111.81:1339";
 		DesiredCapabilities cap = new DesiredCapabilities();
+		cap.setBrowserName("chrome");
+		cap.setPlatform(Platform.WIN10);
 		try {
-			driverThread.set(new RemoteWebDriver(new URL("http://35.154.68.107/wd/hub"), cap));
+			driverThread.set(new RemoteWebDriver(new URL(nodeURL), cap));
+
 		} catch (MalformedURLException e) {
 		}
 		switch (browser.toUpperCase()) {
 		case "CHROME":
 			System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
-			driverThread.set(new ChromeDriver());
+			// driverThread.set(new ChromeDriver());
 			driverThread.get().manage().window().maximize();
 			driverThread.get().manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 			break;
