@@ -6,7 +6,7 @@ import java.util.Properties;
 import base.PredefinedActions;
 import entities.ProductDetails;
 import filePaths.Constants;
-import junit.framework.Assert;
+import org.testng.Assert;
 import utils.PropertieFileUtils;
 
 public class ShippingAndPaymentPage extends PredefinedActions {
